@@ -33,7 +33,7 @@ X-API-Key: <your API_KEY from .env>
 | Part | Status |
 |------|--------|
 | 1 — Scaffold | Done |
-| 2 — Parsing & chunking | Pending |
+| 2 — Parsing & chunking | Done |
 | 3 — Embeddings & Pinecone | Pending |
 | 4 — Ingest API | Pending |
 | 5 — Chat / RAG API | Pending |
