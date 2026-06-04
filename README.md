@@ -2,6 +2,15 @@
 
 Production RAG chatbot: FastAPI, OpenAI embeddings, Pinecone, GPT-4.
 
+## Part 3 — Pinecone index setup
+
+```bash
+# Requires real PINECONE_API_KEY and OPENAI_API_KEY in .env
+python scripts/ensure_pinecone_index.py
+```
+
+Index defaults: `rag-index`, dimension 1536, cosine metric, serverless AWS `us-east-1`.
+
 ## Part 1 — Local setup
 
 ```bash
@@ -34,7 +43,7 @@ X-API-Key: <your API_KEY from .env>
 |------|--------|
 | 1 — Scaffold | Done |
 | 2 — Parsing & chunking | Done |
-| 3 — Embeddings & Pinecone | Pending |
+| 3 — Embeddings & Pinecone | Done |
 | 4 — Ingest API | Pending |
 | 5 — Chat / RAG API | Pending |
 | 6 — Docker | Pending |
