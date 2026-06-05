@@ -2,6 +2,29 @@
 
 Production RAG chatbot: FastAPI, OpenAI embeddings, Pinecone, GPT-4.
 
+Protected routes require header `X-API-Key: <API_KEY from .env>`.
+
+Ingest a document:
+
+```bash
+curl -X POST http://localhost:8000/ingest \
+  -H "X-API-Key: $API_KEY" \
+  -F "kb_id=demo" \
+  -F "file=@tests/fixtures/sample.md"
+```
+
+Expected response shape:
+
+```json
+{
+  "doc_id": "...",
+  "kb_id": "demo",
+  "filename": "sample.md",
+  "source_type": "markdown",
+  "chunks_ingested": 3
+}
+```
+
 ## Part 3 — Pinecone index setup
 
 ```bash
@@ -44,7 +67,7 @@ X-API-Key: <your API_KEY from .env>
 | 1 — Scaffold | Done |
 | 2 — Parsing & chunking | Done |
 | 3 — Embeddings & Pinecone | Done |
-| 4 — Ingest API | Pending |
+| 4 — Ingest API | Done |
 | 5 — Chat / RAG API | Pending |
 | 6 — Docker | Pending |
 | 7 — AWS & CI | Pending |
