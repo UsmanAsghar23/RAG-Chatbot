@@ -25,6 +25,32 @@ Expected response shape:
 }
 ```
 
+```
+
+Ask a question:
+
+```bash
+curl -X POST http://localhost:8000/chat \
+  -H "X-API-Key: $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What is the capital of France?",
+    "kb_id": "demo"
+  }'
+```
+
+Streaming response:
+
+```bash
+curl -N -X POST http://localhost:8000/chat/stream \
+  -H "X-API-Key: $API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "What is the capital of France?",
+    "kb_id": "demo"
+  }'
+```
+
 ## Part 3 — Pinecone index setup
 
 ```bash
@@ -68,6 +94,6 @@ X-API-Key: <your API_KEY from .env>
 | 2 — Parsing & chunking | Done |
 | 3 — Embeddings & Pinecone | Done |
 | 4 — Ingest API | Done |
-| 5 — Chat / RAG API | Pending |
+| 5 — Chat / RAG API | Done |
 | 6 — Docker | Pending |
 | 7 — AWS & CI | Pending |
