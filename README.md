@@ -116,6 +116,56 @@ Protected routes require `X-API-Key: <API_KEY>`.
 | `POST /chat` | Grounded Q&A with `sources[]` |
 | `POST /chat/stream` | SSE stream (`sources`, `token`, `done` events) |
 
+## AWS deployment (Part 7)
+
+Production infrastructure lives in [`infra/terraform/`](infra/terraform/). It provisions:
+
+- VPC with public/private subnets, NAT gateway, and security groups
+- Application Load Balancer with `/health` checks
+- ECS Fargate service (2 tasks by default)
+- ECR repository, Secrets Manager, CloudWatch logs
+
+### Deploy infrastructure
+
+```bash
+cd infra/terraform
+cp terraform.tfvars.example terraform.tfvars
+
+export TF_VAR_openai_api_key="sk-..."
+export TF_VAR_pinecone_api_key="..."
+export TF_VAR_api_key="your-secure-api-key"
+
+terraform init
+terraform apply
+```
+
+See [`infra/terraform/README.md`](infra/terraform/README.md) for HTTPS, remote state, and teardown.
+
+### Build, push, and roll out
+
+```bash
+./scripts/deploy.sh
+```
+
+### Verify production
+
+```bash
+ALB_URL=$(terraform -chdir=infra/terraform output -raw alb_url)
+curl "$ALB_URL/health"
+```
+
+### CI/CD
+
+- **CI** (`.github/workflows/ci.yml`): runs `pytest` on push and pull requests
+- **Deploy** (`.github/workflows/deploy.yml`): manual `workflow_dispatch` — tests, pushes to ECR, forces ECS rollout
+
+GitHub secrets required for deploy:
+
+| Secret | Purpose |
+|--------|---------|
+| `AWS_ACCESS_KEY_ID` | AWS credentials |
+| `AWS_SECRET_ACCESS_KEY` | AWS credentials |
+
 ## Implementation status
 
 | Part | Status |
@@ -126,4 +176,4 @@ Protected routes require `X-API-Key: <API_KEY>`.
 | 4 — Ingest API | Done |
 | 5 — Chat / RAG API | Done |
 | 6 — Docker | Done |
-| 7 — AWS & CI | Pending |
+| 7 — AWS & CI | Done |

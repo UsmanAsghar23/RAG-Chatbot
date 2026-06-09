@@ -37,11 +37,16 @@ class VectorStore:
     ) -> None:
         self._settings = settings
         self._client = client or Pinecone(api_key=settings.pinecone_api_key)
-        self._index = self._client.Index(settings.pinecone_index_name)
+        self._index = None
 
     @property
     def index_name(self) -> str:
         return self._settings.pinecone_index_name
+
+    def _get_index(self):
+        if self._index is None:
+            self._index = self._client.Index(self._settings.pinecone_index_name)
+        return self._index
 
     async def ensure_index(
         self,
@@ -88,7 +93,7 @@ class VectorStore:
         for start in range(0, len(vectors), UPSERT_BATCH_SIZE):
             batch = vectors[start : start + UPSERT_BATCH_SIZE]
             await asyncio.to_thread(
-                self._index.upsert,
+                self._get_index().upsert,
                 vectors=batch,
                 namespace=kb_id,
             )
@@ -108,7 +113,7 @@ class VectorStore:
             filter_metadata = {"doc_id": {"$in": doc_ids}}
 
         response = await asyncio.to_thread(
-            self._index.query,
+            self._get_index().query,
             vector=query_embedding,
             top_k=top_k,
             namespace=kb_id,
@@ -136,7 +141,7 @@ class VectorStore:
 
     async def delete_document(self, *, kb_id: str, doc_id: str) -> None:
         await asyncio.to_thread(
-            self._index.delete,
+            self._get_index().delete,
             filter={"doc_id": doc_id},
             namespace=kb_id,
         )
